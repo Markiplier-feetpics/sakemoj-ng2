@@ -43,7 +43,6 @@ public class fps : MonoBehaviour
         vel.z = speed;
         if (cc.isGrounded) //on ground
         {
-            if (crotch) {crotch=AttemptCrouch();}
             if (j) 
             {
                 if (transform.localScale.magnitude < 3)
@@ -70,20 +69,14 @@ public class fps : MonoBehaviour
         {
             direction = new(0, -1, 0), 
         };
-    Boolean AttemptCrouch()
+    void AttemptCrouch()
     {
         float d = (cc.height+cc.radius)*transform.localScale.y;
         r.origin = transform.position+new Vector3(0,d,0);
         cc.Raycast(r, out RaycastHit i, d-0.1f);
-        if (!i.rigidbody){
-            if (transform.localScale.y < 1){transform.localScale = Vector3.one;maxspeed/=slowening;}
-            else {transform.localScale = new(1,smallening,1);maxspeed*=slowening;}
-            if(cc.isGrounded) {cc.Move(new(0,(cc.height+cc.radius)*transform.localScale.y-cc.height+cc.radius,0));}
-            return false;
-        }else{
-            print("touched");
-            return true;
-        }
+        if (transform.localScale.y < 1){transform.localScale = Vector3.one;maxspeed/=slowening;}
+        else {transform.localScale = new(1,smallening,1);maxspeed*=slowening;}
+        if(cc.isGrounded) {cc.Move(new(0,(cc.height+cc.radius)*transform.localScale.y-cc.height+cc.radius,0));}
     }
     public void OnLook(InputValue value)
     {
@@ -97,8 +90,8 @@ public class fps : MonoBehaviour
     {
         j=!j;
     }
-    public void OnDown()
+    public void OnCrouch()
     {
-        crotch=AttemptCrouch();
+        AttemptCrouch();
     }
 }
