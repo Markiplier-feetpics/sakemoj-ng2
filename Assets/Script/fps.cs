@@ -23,7 +23,6 @@ public class fps : MonoBehaviour
     Vector2 look;
     CharacterController cc;
     Boolean j=false;
-    Boolean crotch=false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -45,13 +44,14 @@ public class fps : MonoBehaviour
         {
             if (j) 
             {
-                if (transform.localScale.magnitude < 3)
+                
+                if (transform.localScale.y < 1)
                 {
                     vel.y = jumpy*moveM()/2;
-                    vel.z += jumpy*moveM()/2;
+                    vel.z += jumpy;
                 } else {vel.y=jumpy*moveM();}
             } 
-            else {vel.y=0;}
+            else {vel.y=-0.1f;}
             
         } else //in air
         {if (vel.y>0&&!j) {vel.y-=20*Time.deltaTime;}}
@@ -59,11 +59,10 @@ public class fps : MonoBehaviour
         c.transform.Rotate(new(-look.y*sens*Time.deltaTime,0,0));
         cc.Move(transform.TransformDirection(new(vel.z*inp.x*Time.deltaTime, vel.y*Time.deltaTime, vel.z*inp.y*Time.deltaTime)));
         
-    
     }
     float moveM()
     {
-        return Mathf.Clamp(vel.z*MaxJumpyM/maxspeed, MinJumpyM, MaxJumpyM);
+        return Mathf.Clamp(speed*MaxJumpyM/maxspeed, MinJumpyM, MaxJumpyM);
     }
     Ray r = new()
         {
@@ -76,7 +75,7 @@ public class fps : MonoBehaviour
         cc.Raycast(r, out RaycastHit i, d-0.1f);
         if (transform.localScale.y < 1){transform.localScale = Vector3.one;maxspeed/=slowening;}
         else {transform.localScale = new(1,smallening,1);maxspeed*=slowening;}
-        if(cc.isGrounded) {cc.Move(new(0,(cc.height+cc.radius)*transform.localScale.y-cc.height+cc.radius,0));}
+        
     }
     public void OnLook(InputValue value)
     {
@@ -89,6 +88,25 @@ public class fps : MonoBehaviour
     public void OnJump()
     {
         j=!j;
+        if (j)
+        {
+           Boolean w = Physics.SphereCast(transform.position, cc.radius, transform.TransformDirection(new(0,0,1)), out RaycastHit h, 2);
+            if (w)
+            {
+                if (!Physics.Raycast(transform.position+new Vector3(0,2,0), transform.TransformDirection(new(0,0,1)), 2))
+                {
+                    print("vault");
+                    h.collider.enabled = false;
+                    vel.z = speed+vel.y;
+                    vel.y = 10;
+                    new WaitForSeconds(0.5f);
+                    h.collider.enabled = true;
+                    
+                }
+                
+            } 
+        }
+        
     }
     public void OnCrouch()
     {
