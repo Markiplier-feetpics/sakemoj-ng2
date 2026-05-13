@@ -27,9 +27,9 @@ public class Stater : MonoBehaviour
         {
             a.SetTrigger("Vault"); 
         }
-        a.SetBool("Jumping", f.j && f.grounded);
+        a.SetBool("Jumping", f.j && f.vel.y>=0);
         oldvault = f.vault;
         a.SetBool("Falling", !f.grounded && !a.GetBool("Jumping"));
-
+        a.SetInteger("Wr", f.wr);
     }
 }
